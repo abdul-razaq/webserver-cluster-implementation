@@ -15,6 +15,6 @@ terraform {
 module "iam_user" {
   source = "../../../modules/landing_zone/iam_user"
 
-  count = length(var.iam_users)
-  iam_user = var.iam_users[count.index]
+  for_each = toset(var.iam_users)
+  iam_user = each.value
 }
