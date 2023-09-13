@@ -34,6 +34,8 @@ module "webserver_cluster" {
     Owner = "Team Antigen"
     ManagedBy = "Terraform"
   }
+
+  enable_autoscaling = false
 } 
 
 resource "aws_security_group_rule" "allow_inbound_testing" {
