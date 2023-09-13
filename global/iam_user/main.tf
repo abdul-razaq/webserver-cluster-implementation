@@ -11,11 +11,11 @@ provider "aws" {
 
 terraform {
   backend "s3" {
+    region = "us-east-2"
     bucket = "terraform-state-backend-abdrazaq"
     key = "global/iam_user/terraform.tfstate"
     dynamodb_table = "terraform-state-locks"
     encrypt = true
-    region = "us-east-2"
   }
 }
 
@@ -24,4 +24,6 @@ module "iam_user" {
 
   for_each = toset(var.iam_users)
   iam_user = each.value
+
+  give_user_cloudwatch_full_access = var.iam_users[0] ? true : false
 }
