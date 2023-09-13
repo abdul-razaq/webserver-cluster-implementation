@@ -1,5 +1,12 @@
 provider "aws" {
   region = "us-east-2"
+
+  default_tags {
+    tags = {
+      Owner = "Team Antigen"
+      ManagedBy = "Terraform"
+    }
+  }
 }
 
 terraform {
@@ -13,7 +20,7 @@ terraform {
 }
 
 module "webserver_cluster" {
-  source = "github.com/abdul-razaq/webserver-cluster//services/webserver-cluster?ref=v1.0.0"
+  source = "../../../../modules/services/webserver-cluster"
 
   cluster_name = "webservers-stage"
   db_remote_state_bucket = "terraform-state-backend-abdrazaq"
@@ -22,6 +29,11 @@ module "webserver_cluster" {
   instance_type = "t2.micro"
   min_size = 2
   max_size = 2
+
+  custom_tags ={
+    Owner = "Team Antigen"
+    ManagedBy = "Terraform"
+  }
 } 
 
 resource "aws_security_group_rule" "allow_inbound_testing" {

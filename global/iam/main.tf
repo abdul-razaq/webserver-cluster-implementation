@@ -1,5 +1,12 @@
 provider "aws" {
   region = "us-east-2"
+
+  default_tags {
+    tags = {
+      Owner = "Team Antigen"
+      ManagedBy = "Terraform"
+    }
+  }
 }
 
 resource "aws_iam_user" "iam_user" {
