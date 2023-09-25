@@ -26,6 +26,8 @@ module "webserver_cluster" {
   db_remote_state_bucket = "terraform-state-backend-abdrazaq"
   db_remote_state_key = "stage/data-stores/mysql/terraform.tfstate"
 
+  ami = "ami-0fb653ca2d3203ac1"
+  server_data = "This is a new server text!!!"
   instance_type = "t2.micro"
   min_size = 2
   max_size = 2

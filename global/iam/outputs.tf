@@ -30,10 +30,19 @@ output "mapped_upper_roles" {
 
 output "for_directive" {
   description = "Use for directive to print out IAM usernames to create in a string directive"
-  value = "%{ for name in var.user_names }${ name }, %{ endfor }"
+  value = "%{ for name in var.user_names }${ name } %{ endfor }"
 }
 
 output "for_directive_index" {
   description = "for_directive but with the index of the Collection"
   value = "%{ for i, name in var.user_names } (${i}) ${name} %{ endfor }"
+}
+
+output "for_directive_if" {
+  description = "Use the if directive with the for directive to remove trailing space and comma"
+  value = <<EOF
+    %{~ for i, name in var.user_names ~}
+      ${name} %{ if i < length(var.user_names) -1 }, %{ else }. %{endif}
+    %{~ endfor ~}
+  EOF
 }
