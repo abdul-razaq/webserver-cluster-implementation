@@ -1,14 +1,3 @@
-provider "aws" {
-  region = "us-east-2"
-
-  default_tags {
-    tags = {
-      Owner = "Team Antigen"
-      ManagedBy = "Terraform"
-    }
-  }
-}
-
 terraform {
   backend "s3" {
     key = "prod/data-stores/mysql/terraform.tfstate"
@@ -17,14 +6,50 @@ terraform {
     dynamodb_table = "terraform-state-locks"
     encrypt = true
   }
-} 
+}
 
-module "db_instance_prod" {
-  source = "github.com/abdul-razaq/webserver-cluster//data-stores/mysql?ref=v1.0.0"
+provider "aws" {
+  region = "us-east-2"
+  alias = "primary_region"
+  default_tags {
+    tags = {
+      Owner = "Team Antigen"
+      ManagedBy = "Terraform"
+      Environment = "Primary"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-west-1"
+  alias = "replica_region"
+
+  default_tags {
+    tags = {
+      Owner = "Team Antigen"
+      ManagedBy = "Terraform"
+      Environment = "Replica"
+    }
+  }
+}
+
+module "primary_database" {
+  source = "../../../../modules/data-stores/mysql"
+  providers = {
+    aws = aws.primary_region
+  }
 
   db_name = "db_prod"
   db_resource_name = "db_prod"
 
   db_username = var.db_username
   db_password = var.db_password
+
+  backup_retention_period = 1
+}
+
+module "replica_database" {
+  source = "../../../../modules/data-stores/mysql"
+
+  replicate_source_db = module.primary_database.database_arn
 }
